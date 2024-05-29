@@ -4,6 +4,7 @@ Nivel::Nivel(Jugador *jugador) : jugador(jugador) {}
 
 void Nivel::cargar() {
     jugador->setPos(100, 500);  
+
     Obstaculo *obstaculo1 = new Obstaculo();
     obstaculo1->setPos(300, 500);
     obstaculos.append(obstaculo1);
@@ -11,6 +12,7 @@ void Nivel::cargar() {
     Obstaculo *obstaculo2 = new Obstaculo();
     obstaculo2->setPos(500, 500);
     obstaculos.append(obstaculo2);
+
     Enemigo *enemigo1 = new Enemigo();
     enemigo1->setPos(700, 500);
     enemigos.append(enemigo1);
