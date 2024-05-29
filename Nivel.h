@@ -1,7 +1,10 @@
 #ifndef NIVEL_H
 #define NIVEL_H
 
+#include <QList>
 #include "Jugador.h"
+#include "Obstaculo.h"
+#include "Enemigo.h"
 
 class Nivel {
 public:
@@ -11,6 +14,8 @@ public:
 
 private:
     Jugador *jugador;
+    QList<Obstaculo*> obstaculos;
+    QList<Enemigo*> enemigos;
 };
 
-#endif /
+#endif 
