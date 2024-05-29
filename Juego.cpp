@@ -12,9 +12,15 @@ void Juego::iniciar() {
     nivel = new Nivel(jugador);
     scene()->addItem(jugador);
     nivel->cargar();
+
     QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &Juego::update);
-    timer->start(16);
+    connect(timer, &QTimer::timeout, this, &Juego::actualizar);
+    timer->start(16);  
 
     show();
+}
+
+void Juego::actualizar() {
+    nivel->actualizar();
+    scene()->update();
 }
