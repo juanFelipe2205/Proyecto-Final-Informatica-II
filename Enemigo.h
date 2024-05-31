@@ -2,15 +2,22 @@
 #define ENEMIGO_H
 
 #include <QGraphicsPixmapItem>
+#include <QTimer>
 
 class Enemigo : public QGraphicsPixmapItem {
 public:
     Enemigo();
     void atacar();
+    void mover();
+
+private slots:
+    void actualizarMovimiento();
 
 private:
-    int vida;
-    QPointF posicion;
+    qreal amplitud;
+    qreal frecuencia;
+    qreal fase;
+    QTimer *timerMovimiento;
 };
 
 #endif 
