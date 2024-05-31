@@ -3,6 +3,9 @@
 
 #include <QGraphicsView>
 #include "Nivel.h"
+#include "Nivel1.h"
+#include "Nivel2.h"
+#include "Nivel3.h"
 #include "Jugador.h"
 
 class Juego : public QGraphicsView {
@@ -10,11 +13,14 @@ class Juego : public QGraphicsView {
 
 public:
     Juego(QWidget *parent = nullptr);
-    void iniciar();
+    void iniciar(int nivelSeleccionado);
+
+private slots:
+    void actualizar();
 
 private:
     Nivel *nivel;
     Jugador *jugador;
 };
 
-#endif 
+#endif
