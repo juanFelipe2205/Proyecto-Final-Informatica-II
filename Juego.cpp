@@ -8,11 +8,24 @@ Juego::Juego(QWidget *parent) : QGraphicsView(parent), jugador(new Jugador()) {
     scene()->setSceneRect(0, 0, 800, 600);
 }
 
-void Juego::iniciar() {
-    nivel = new Nivel(jugador);
+void Juego::iniciar(int nivelSeleccionado) {
+    switch (nivelSeleccionado) {
+        case 1:
+            nivel = new Nivel1(jugador);
+            break;
+        case 2:
+            nivel = new Nivel2(jugador);
+            break;
+        case 3:
+            nivel = new Nivel3(jugador);
+            break;
+        default:
+            nivel = new Nivel1(jugador);
+            break;
+    }
+
     scene()->addItem(jugador);
     nivel->cargar();
-
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Juego::actualizar);
     timer->start(16);  
