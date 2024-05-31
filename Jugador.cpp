@@ -1,7 +1,11 @@
 #include "Jugador.h"
 
-Jugador::Jugador() : izquierda(false), derecha(false) {
+Jugador::Jugador() 
+    : izquierda(false), derecha(false), saltando(false), 
+      velocidadX(0), velocidadY(0), gravedad(0.5) {
     setPixmap(QPixmap(":/images/jugador.png"));
+    timerSalto = new QTimer(this);
+    connect(timerSalto, &QTimer::timeout, this, &Jugador::actualizarSalto);
 }
 
 void Jugador::keyPressEvent(QKeyEvent *event) {
@@ -9,6 +13,10 @@ void Jugador::keyPressEvent(QKeyEvent *event) {
         izquierda = true;
     } else if (event->key() == Qt::Key_Right) {
         derecha = true;
+    } else if (event->key() == Qt::Key_Space && !saltando) {
+        saltando = true;
+        velocidadY = -10;  
+        timerSalto->start(16);
     }
 }
 
@@ -26,5 +34,17 @@ void Jugador::mover() {
     }
     if (derecha) {
         setPos(x() + 5, y());
+    }
+}
+
+void Jugador::actualizarSalto() {
+    if (saltando) {
+        setPos(x(), y() + velocidadY);
+        velocidadY += gravedad;
+        if (y() >= 500) {  
+            setPos(x(), 500);
+            saltando = false;
+            timerSalto->stop();
+        }
     }
 }
