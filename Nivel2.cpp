@@ -19,7 +19,9 @@ void Nivel2::cargar() {
 
 void Nivel2::actualizar() {
     for (Enemigo *enemigo : enemigos) {
+        enemigo->mover();
         enemigo->atacar();
     }
     jugador->mover();
+    // Por implementar
 }
