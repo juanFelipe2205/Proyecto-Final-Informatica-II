@@ -3,6 +3,7 @@
 
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include <QTimer>
 
 class Jugador : public QGraphicsPixmapItem {
 public:
@@ -11,9 +12,17 @@ public:
     void keyReleaseEvent(QKeyEvent *event);
     void mover();
 
+private slots:
+    void actualizarSalto();
+
 private:
     bool izquierda;
     bool derecha;
+    bool saltando;
+    qreal velocidadX;
+    qreal velocidadY;
+    qreal gravedad;
+    QTimer *timerSalto;
 };
 
 #endif 
