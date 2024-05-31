@@ -9,14 +9,14 @@
 class Nivel {
 public:
     Nivel(Jugador *jugador);
-    void cargar();
-    void actualizar();
+    virtual ~Nivel() = default;
+    virtual void cargar() = 0;
+    virtual void actualizar() = 0;
 
-private:
+protected:
     Jugador *jugador;
     QList<Obstaculo*> obstaculos;
     QList<Enemigo*> enemigos;
 };
 
 #endif 
-
