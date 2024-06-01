@@ -3,21 +3,19 @@
 
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include "Jugador.h"
 
 class Enemigo : public QGraphicsPixmapItem {
 public:
-    Enemigo();
+    Enemigo(Jugador *jugador);
     void atacar();
     void mover();
 
-private slots:
-    void actualizarMovimiento();
-
 private:
-    qreal amplitud;
-    qreal frecuencia;
-    qreal fase;
+    Jugador *jugador;
+    qreal velocidad;
     QTimer *timerMovimiento;
 };
 
 #endif 
+
