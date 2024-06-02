@@ -7,13 +7,16 @@
 
 class Enemigo : public QGraphicsPixmapItem {
 public:
-    Enemigo(Jugador *jugador);
+    Enemigo(Jugador *jugador, int vida = 2);
     void atacar();
     void mover();
+    void reducirVida(int cantidad);
+    int getVida() const;
 
 private:
     Jugador *jugador;
     qreal velocidad;
+    int vida;
     QTimer *timerMovimiento;
 };
 
