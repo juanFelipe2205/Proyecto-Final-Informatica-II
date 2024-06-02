@@ -1,20 +1,13 @@
 #include "Nivel1.h"
 
-Nivel1::Nivel1(Jugador *jugador) : Nivel(jugador) {}
+Nivel1::Nivel1(Jugador *jugador) : Nivel(jugador) {
+    timerGeneracion = new QTimer(this);
+    connect(timerGeneracion, &QTimer::timeout, this, &Nivel1::generarObstaculo);
+    timerGeneracion->start(2000);  
+}
 
 void Nivel1::cargar() {
     jugador->setPos(0, 500);  
-    Obstaculo *obstaculo1 = new Obstaculo();
-    obstaculo1->setPos(300, 0); 
-    obstaculos.append(obstaculo1);
-
-    Obstaculo *obstaculo2 = new Obstaculo();
-    obstaculo2->setPos(600, 0);  
-    obstaculos.append(obstaculo2);
-
-    for (Obstaculo *obstaculo : obstaculos) {
-        jugador->scene()->addItem(obstaculo);
-    }
 }
 
 void Nivel1::actualizar() {
@@ -22,4 +15,19 @@ void Nivel1::actualizar() {
         obstaculo->mover();
     }
     jugador->mover();
+    for (int i = 0; i < obstaculos.size(); ++i) {
+        if (obstaculos[i]->x() < -50) {
+            delete obstaculos[i];
+            obstaculos.removeAt(i);
+        }
+    }
+}
+
+void Nivel1::generarObstaculo() {
+    if (obstaculos.size() < 5) {
+        Obstaculo *obstaculo = new Obstaculo();
+        obstaculo->setPos(800, jugador->y());  
+        obstaculos.append(obstaculo);
+        jugador->scene()->addItem(obstaculo);
+    }
 }
