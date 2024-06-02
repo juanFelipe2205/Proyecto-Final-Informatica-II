@@ -3,7 +3,7 @@
 Nivel2::Nivel2(Jugador *jugador) : Nivel(jugador) {
     timerGeneracion = new QTimer(this);
     connect(timerGeneracion, &QTimer::timeout, this, &Nivel2::generarEnemigo);
-    timerGeneracion->start(2000);  
+    timerGeneracion->start(2000); 
 }
 
 void Nivel2::cargar() {
@@ -32,4 +32,3 @@ void Nivel2::generarEnemigo() {
         jugador->scene()->addItem(enemigo);
     }
 }
-
