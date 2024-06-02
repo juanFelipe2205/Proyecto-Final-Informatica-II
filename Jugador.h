@@ -15,6 +15,9 @@ public:
     int getVida() const;
     void atacar();
     void habilitarMovimiento(bool habilitado);
+    void guardarProgreso();
+    void cargarProgreso();
+    void borrarProgreso();
 
 private:
     bool izquierda;
@@ -26,6 +29,7 @@ private:
     qreal velocidadY;
     qreal gravedad;
     int vida;
+    int nivelActual; 
     QTimer *timerSalto;
     QTimer *timerAtaque;
 
