@@ -84,7 +84,7 @@ void Jugador::atacar() {
             qreal dx = enemigo->x() - x();
             qreal dy = enemigo->y() - y();
             qreal distancia = qSqrt(dx*dx + dy*dy);
-            if (distancia < 40) {  
+            if (distancia < 40) { 
                 enemigo->reducirVida(1);
             }
         }
