@@ -3,11 +3,13 @@
 Nivel2::Nivel2(Jugador *jugador) : Nivel(jugador) {
     timerGeneracion = new QTimer(this);
     connect(timerGeneracion, &QTimer::timeout, this, &Nivel2::generarEnemigo);
-    timerGeneracion->start(2000); 
+    timerGeneracion->start(3000);  
 }
 
 void Nivel2::cargar() {
-    jugador->setPos(0, 500);  
+    jugador->setPos(100, 500);  
+    jugador->habilitarMovimiento(true);  
+    generarEnemigo();
 }
 
 void Nivel2::actualizar() {
@@ -25,9 +27,9 @@ void Nivel2::actualizar() {
 }
 
 void Nivel2::generarEnemigo() {
-    if (enemigos.size() < 5) {
+    if (enemigos.size() < 10) {
         Enemigo *enemigo = new Enemigo(jugador);
-        enemigo->setPos(800, qrand() % 600); 
+        enemigo->setPos(800, 500); 
         enemigos.append(enemigo);
         jugador->scene()->addItem(enemigo);
     }
