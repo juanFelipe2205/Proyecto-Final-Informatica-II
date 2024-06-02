@@ -16,7 +16,6 @@ void Nivel2::actualizar() {
         enemigo->atacar();
     }
     jugador->mover();
-
     for (int i = 0; i < enemigos.size(); ++i) {
         if (enemigos[i]->x() < -50 || enemigos[i]->x() > 850) {
             delete enemigos[i];
@@ -28,7 +27,7 @@ void Nivel2::actualizar() {
 void Nivel2::generarEnemigo() {
     if (enemigos.size() < 5) {
         Enemigo *enemigo = new Enemigo(jugador);
-        enemigo->setPos(800, qrand() % 600);  
+        enemigo->setPos(800, qrand() % 600); 
         enemigos.append(enemigo);
         jugador->scene()->addItem(enemigo);
     }
