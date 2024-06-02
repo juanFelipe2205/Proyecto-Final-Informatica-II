@@ -1,39 +1,48 @@
 #include "Juego.h"
-#include <QGraphicsScene>
-#include <QTimer>
 
-Juego::Juego(QWidget *parent) : QGraphicsView(parent), jugador(new Jugador()) {
-    setFixedSize(800, 600);
-    setScene(new QGraphicsScene(this));
-    scene()->setSceneRect(0, 0, 800, 600);
+Juego::Juego(QWidget *parent) : QGraphicsView(parent) {
+    scene = new QGraphicsScene(this);
+    setScene(scene);
+    jugador = new Jugador();
+    scene->addItem(jugador);
+    iniciarJuego();
 }
 
-void Juego::iniciar(int nivelSeleccionado) {
-    switch (nivelSeleccionado) {
+void Juego::iniciarJuego() {
+    cambiarNivel(1);
+}
+
+void Juego::cambiarNivel(int nivel) {
+    if (nivelActual != nullptr) {
+        scene->removeItem(nivelActual);
+        delete nivelActual;
+    }
+
+    switch (nivel) {
         case 1:
-            nivel = new Nivel1(jugador);
+            nivelActual = new Nivel1(jugador);
             break;
         case 2:
-            nivel = new Nivel2(jugador);
+            nivelActual = new Nivel2(jugador);
             break;
         case 3:
-            nivel = new Nivel3(jugador);
+            nivelActual = new Nivel3(jugador);
             break;
         default:
-            nivel = new Nivel1(jugador);
+            nivelActual = nullptr;
             break;
     }
 
-    scene()->addItem(jugador);
-    nivel->cargar();
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &Juego::actualizar);
-    timer->start(16);  
-
-    show();
+    if (nivelActual != nullptr) {
+        nivelActual->cargar();
+        scene->addItem(nivelActual);
+        connect(&nivelActual->timer, &QTimer::timeout, this, &Juego::actualizar);
+        nivelActual->timer.start(16);
+    }
 }
 
 void Juego::actualizar() {
-    nivel->actualizar();
-    scene()->update();
+    if (nivelActual != nullptr) {
+        nivelActual->actualizar();
+    }
 }
