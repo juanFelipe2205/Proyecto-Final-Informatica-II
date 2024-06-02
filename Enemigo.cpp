@@ -1,5 +1,6 @@
 #include "Enemigo.h"
 #include <QtMath>
+#include <QGraphicsScene>
 
 Enemigo::Enemigo(Jugador *jugador) 
     : jugador(jugador), velocidad(2) {
@@ -10,7 +11,13 @@ Enemigo::Enemigo(Jugador *jugador)
 }
 
 void Enemigo::atacar() {
-    // Implementar lógica de ataque aquí
+    qreal dx = jugador->x() - x();
+    qreal dy = jugador->y() - y();
+    qreal distancia = qSqrt(dx*dx + dy*dy);
+    
+    if (distancia < 10) {  
+        jugador->reducirVida(1);
+    }
 }
 
 void Enemigo::mover() {
@@ -21,4 +28,6 @@ void Enemigo::mover() {
     if (distancia > 0) {
         setPos(x() + velocidad * (dx / distancia), y() + velocidad * (dy / distancia));
     }
+    
+    atacar();
 }
