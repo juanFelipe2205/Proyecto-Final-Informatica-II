@@ -1,5 +1,7 @@
 #include "Jugador.h"
 #include <QGraphicsScene>
+#include <QGraphicsTextItem>
+#include <QFont>
 #include <QList>
 #include <QtMath>
 #include <QFile>
@@ -85,6 +87,12 @@ void Jugador::actualizarSalto() {
 void Jugador::reducirVida(int cantidad) {
     vida -= cantidad;
     if (vida <= 0) {
+        QGraphicsTextItem *gameOverText = new QGraphicsTextItem("Game Over");
+        QFont font("Arial", 48);
+        gameOverText->setFont(font);
+        gameOverText->setDefaultTextColor(Qt::red);
+        gameOverText->setPos(200, 200); 
+        scene()->addItem(gameOverText);
         scene()->removeItem(this);
         delete this;
     }
