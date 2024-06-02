@@ -1,7 +1,8 @@
 #include "Obstaculo.h"
+#include <QGraphicsScene>
 
-Obstaculo::Obstaculo() 
-    : velocidadY(0), gravedad(0.5) {
+Obstaculo::Obstaculo(Jugador *jugador) 
+    : velocidadY(0), gravedad(0.5), jugador(jugador) {
     setPixmap(QPixmap(":/images/obstaculo.png"));
     timerCaida = new QTimer(this);
     connect(timerCaida, &QTimer::timeout, this, &Obstaculo::actualizarCaida);
@@ -11,12 +12,19 @@ Obstaculo::Obstaculo()
 void Obstaculo::actualizarCaida() {
     setPos(x(), y() + velocidadY);
     velocidadY += gravedad;
-    if (y() >= 500) { 
+
+    // Detectar colisión con el jugador
+    if (collidesWithItem(jugador)) {
+        jugador->reducirVida(1);
+        scene()->removeItem(this);
+        delete this;
+        return;
+    if (y() >= 500) {  
         setPos(x(), 500);
         timerCaida->stop();
     }
 }
 
 void Obstaculo::mover() {
-    // Por implementar
+    //Nada que implementar de momento
 }
