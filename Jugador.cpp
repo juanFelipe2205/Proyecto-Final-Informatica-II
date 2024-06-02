@@ -2,10 +2,12 @@
 #include <QGraphicsScene>
 #include <QList>
 #include <QtMath>
+#include <QFile>
+#include <QTextStream>
 
 Jugador::Jugador() 
     : izquierda(false), derecha(false), saltando(false), atacando(false),
-      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10), movimientoHabilitado(true) {
+      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10), movimientoHabilitado(true), nivelActual(1) {
     setPixmap(QPixmap(":/images/jugador.png"));
     timerSalto = new QTimer(this);
     connect(timerSalto, &QTimer::timeout, this, &Jugador::actualizarSalto);
@@ -31,6 +33,13 @@ void Jugador::keyPressEvent(QKeyEvent *event) {
             derecha = true;
             velocidadX = 5;
         }
+    }
+    if (event->key() == Qt::Key_K) {
+        guardarProgreso();
+    } else if (event->key() == Qt::Key_L) {
+        cargarProgreso();
+    } else if (event->key() == Qt::Key_J) {
+        borrarProgreso();
     }
 }
 
@@ -67,6 +76,7 @@ void Jugador::actualizarSalto() {
 void Jugador::reducirVida(int cantidad) {
     vida -= cantidad;
     if (vida <= 0) {
+        // Manejar el fin del juego
         scene()->removeItem(this);
         delete this;
     }
@@ -93,4 +103,37 @@ void Jugador::atacar() {
 
 void Jugador::habilitarMovimiento(bool habilitado) {
     movimientoHabilitado = habilitado;
+}
+
+void Jugador::guardarProgreso() {
+    QFile file("progreso.txt");
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream out(&file);
+        out << nivelActual << "\n";
+        out << vida << "\n";
+        out << x() << "\n";
+        out << y() << "\n";
+        file.close();
+    }
+}
+
+void Jugador::cargarProgreso() {
+    QFile file("progreso.txt");
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream in(&file);
+        in >> nivelActual;
+        in >> vida;
+        qreal posX, posY;
+        in >> posX;
+        in >> posY;
+        setPos(posX, posY);
+        file.close();
+    }
+}
+
+void Jugador::borrarProgreso() {
+    QFile file("progreso.txt");
+    if (file.exists()) {
+        file.remove();
+    }
 }
