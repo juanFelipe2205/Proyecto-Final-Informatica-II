@@ -3,10 +3,11 @@
 
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include "Jugador.h"
 
 class Obstaculo : public QGraphicsPixmapItem {
 public:
-    Obstaculo();
+    Obstaculo(Jugador *jugador);
     void mover();
 
 private slots:
@@ -15,6 +16,7 @@ private slots:
 private:
     qreal velocidadY;
     qreal gravedad;
+    Jugador *jugador;
     QTimer *timerCaida;
 };
 
