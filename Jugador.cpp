@@ -18,12 +18,12 @@ Jugador::Jugador()
 void Jugador::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Space && !saltando) {
         saltando = true;
-        velocidadY = -10;  // Velocidad inicial del salto
+        velocidadY = -10;  
         timerSalto->start(16);
     } else if (event->key() == Qt::Key_A && !atacando) {
         atacando = true;
         atacar();
-        timerAtaque->start(500);  // Cooldown de 0.5 segundos para el ataque
+        timerAtaque->start(500);  
     }
 
     if (movimientoHabilitado) {
