@@ -18,22 +18,24 @@ Jugador::Jugador()
 void Jugador::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Space && !saltando) {
         saltando = true;
-        velocidadY = -10;  
+        velocidadY = -10;  // Velocidad inicial del salto
         timerSalto->start(16);
     } else if (event->key() == Qt::Key_A && !atacando) {
         atacando = true;
         atacar();
-        timerAtaque->start(500);  
+        timerAtaque->start(500);  // Cooldown de 0.5 segundos para el ataque
     }
+
     if (movimientoHabilitado) {
-        if (event->key() == Qt::Key_Left) {
+        if (event->key() == Qt::Key_Left || event->key() == Qt::Key_A) {
             izquierda = true;
             velocidadX = -5;
-        } else if (event->key() == Qt::Key_Right) {
+        } else if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) {
             derecha = true;
             velocidadX = 5;
         }
     }
+
     if (event->key() == Qt::Key_K) {
         guardarProgreso();
     } else if (event->key() == Qt::Key_L) {
@@ -45,15 +47,16 @@ void Jugador::keyPressEvent(QKeyEvent *event) {
 
 void Jugador::keyReleaseEvent(QKeyEvent *event) {
     if (movimientoHabilitado) {
-        if (event->key() == Qt::Key_Left) {
+        if (event->key() == Qt::Key_Left || event->key() == Qt::Key_A) {
             izquierda = false;
             if (!derecha) velocidadX = 0;
-        } else if (event->key() == Qt::Key_Right) {
+        } else if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) {
             derecha = false;
             if (!izquierda) velocidadX = 0;
         }
     }
 }
+
 
 void Jugador::mover() {
     if (movimientoHabilitado) {
