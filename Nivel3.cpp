@@ -8,6 +8,7 @@ Nivel3::Nivel3(Jugador *jugador) : Nivel(jugador), contadorHordas(0), jefeFinalG
 
 void Nivel3::cargar() {
     jugador->setPos(400, 500);  
+    jugador->habilitarMovimiento(true); 
     generarHorda();
 }
 
@@ -15,6 +16,9 @@ void Nivel3::actualizar() {
     for (Enemigo *enemigo : enemigos) {
         enemigo->mover();
         enemigo->atacar();
+    }
+    for (Obstaculo *obstaculo : obstaculos) {
+        obstaculo->moverCaidaLibre();
     }
     jugador->mover();
     for (int i = 0; i < enemigos.size(); ++i) {
@@ -30,8 +34,9 @@ void Nivel3::actualizar() {
         jugador->scene()->addItem(jefeFinal);
         jefeFinalGenerado = true;
     }
+
     if (obstaculos.isEmpty() && contadorHordas < 5) {
-        Obstaculo *obstaculo = new Obstaculo(jugador);
+        Obstaculo *obstaculo = new Obstaculo(jugador, false);
         obstaculo->setPos(qrand() % 800, 0);  
         obstaculos.append(obstaculo);
         jugador->scene()->addItem(obstaculo);
