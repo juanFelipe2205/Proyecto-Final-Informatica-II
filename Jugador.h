@@ -14,21 +14,23 @@ public:
     void reducirVida(int cantidad);
     int getVida() const;
     void atacar();
-
-private slots:
-    void actualizarSalto();
+    void habilitarMovimiento(bool habilitado);
 
 private:
     bool izquierda;
     bool derecha;
     bool saltando;
     bool atacando;
+    bool movimientoHabilitado; 
     qreal velocidadX;
     qreal velocidadY;
     qreal gravedad;
     int vida;
     QTimer *timerSalto;
     QTimer *timerAtaque;
+
+private slots:
+    void actualizarSalto();
 };
 
 #endif 
