@@ -24,13 +24,12 @@ void Nivel3::actualizar() {
         }
     }
     if (enemigos.isEmpty() && !jefeFinalGenerado && contadorHordas >= 5) {
-        Enemigo *jefeFinal = new Enemigo(jugador);  
+        Enemigo *jefeFinal = new Enemigo(jugador, 10);  
         jefeFinal->setPos(400, 400);
         enemigos.append(jefeFinal);
         jugador->scene()->addItem(jefeFinal);
         jefeFinalGenerado = true;
     }
-
     if (obstaculos.isEmpty() && contadorHordas < 5) {
         Obstaculo *obstaculo = new Obstaculo(jugador);
         obstaculo->setPos(qrand() % 800, 0);  
