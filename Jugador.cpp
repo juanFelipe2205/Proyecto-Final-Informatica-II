@@ -1,12 +1,16 @@
 #include "Jugador.h"
+#include "Enemigo.h"
 #include <QGraphicsScene>
+#include <QList>
 
 Jugador::Jugador() 
-    : izquierda(false), derecha(false), saltando(false), 
+    : izquierda(false), derecha(false), saltando(false), atacando(false),
       velocidadX(0), velocidadY(0), gravedad(0.5), vida(10) {
     setPixmap(QPixmap(":/images/jugador.png"));
     timerSalto = new QTimer(this);
     connect(timerSalto, &QTimer::timeout, this, &Jugador::actualizarSalto);
+    timerAtaque = new QTimer(this);
+    connect(timerAtaque, &QTimer::timeout, [this] { atacando = false; timerAtaque->stop(); });
 }
 
 void Jugador::keyPressEvent(QKeyEvent *event) {
@@ -16,8 +20,12 @@ void Jugador::keyPressEvent(QKeyEvent *event) {
         derecha = true;
     } else if (event->key() == Qt::Key_Space && !saltando) {
         saltando = true;
-        velocidadY = -10; 
+        velocidadY = -10;  
         timerSalto->start(16);
+    } else if (event->key() == Qt::Key_A && !atacando) {
+        atacando = true;
+        atacar();
+        timerAtaque->start(500);  
     }
 }
 
@@ -42,7 +50,7 @@ void Jugador::actualizarSalto() {
     if (saltando) {
         setPos(x(), y() + velocidadY);
         velocidadY += gravedad;
-        if (y() >= 500) {  
+        if (y() >= 500) { 
             setPos(x(), 500);
             saltando = false;
             timerSalto->stop();
@@ -60,4 +68,19 @@ void Jugador::reducirVida(int cantidad) {
 
 int Jugador::getVida() const {
     return vida;
+}
+
+void Jugador::atacar() {
+    QList<QGraphicsItem *> items = scene()->items();
+    for (QGraphicsItem *item : items) {
+        Enemigo *enemigo = dynamic_cast<Enemigo *>(item);
+        if (enemigo) {
+            qreal dx = enemigo->x() - x();
+            qreal dy = enemigo->y() - y();
+            qreal distancia = qSqrt(dx*dx + dy*dy);
+            if (distancia < 20) {  
+                enemigo->reducirVida(1);
+            }
+        }
+    }
 }
