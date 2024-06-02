@@ -11,6 +11,8 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void mover();
+    void reducirVida(int cantidad);
+    int getVida() const;
 
 private slots:
     void actualizarSalto();
@@ -22,6 +24,7 @@ private:
     qreal velocidadX;
     qreal velocidadY;
     qreal gravedad;
+    int vida;
     QTimer *timerSalto;
 };
 
