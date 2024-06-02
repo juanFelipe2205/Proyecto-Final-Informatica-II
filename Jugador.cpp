@@ -7,20 +7,27 @@
 
 Jugador::Jugador() 
     : izquierda(false), derecha(false), saltando(false), atacando(false),
-      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10), movimientoHabilitado(true), nivelActual(1) {
+      movimientoHabilitado(true), saltoEsquiveHabilitado(false),
+      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10), nivelActual(1) {
     setPixmap(QPixmap(":/images/jugador.png"));
     timerSalto = new QTimer(this);
     connect(timerSalto, &QTimer::timeout, this, &Jugador::actualizarSalto);
     timerAtaque = new QTimer(this);
     connect(timerAtaque, &QTimer::timeout, [this] { atacando = false; timerAtaque->stop(); });
+    timerSaltoEsquive = new QTimer(this);
 }
 
 void Jugador::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Space && !saltando) {
-        saltando = true;
-        velocidadY = -10;  
-        timerSalto->start(16);
-    } else if (event->key() == Qt::Key_A && !atacando) {
+        if (!saltoEsquiveHabilitado || (saltoEsquiveHabilitado && !timerSaltoEsquive->isActive())) {
+            saltando = true;
+            velocidadY = -10;  
+            timerSalto->start(16);
+            if (saltoEsquiveHabilitado) {
+                timerSaltoEsquive->start(3000);  
+            }
+        }
+    } else if (event->key() == Qt::Key_H && !atacando) {
         atacando = true;
         atacar();
         timerAtaque->start(500);  
@@ -57,7 +64,6 @@ void Jugador::keyReleaseEvent(QKeyEvent *event) {
     }
 }
 
-
 void Jugador::mover() {
     if (movimientoHabilitado) {
         setPos(x() + velocidadX, y());
@@ -79,7 +85,6 @@ void Jugador::actualizarSalto() {
 void Jugador::reducirVida(int cantidad) {
     vida -= cantidad;
     if (vida <= 0) {
-        // Manejar el fin del juego
         scene()->removeItem(this);
         delete this;
     }
@@ -97,7 +102,7 @@ void Jugador::atacar() {
             qreal dx = enemigo->x() - x();
             qreal dy = enemigo->y() - y();
             qreal distancia = qSqrt(dx*dx + dy*dy);
-            if (distancia < 40) { 
+            if (distancia < 40) {  
                 enemigo->reducirVida(1);
             }
         }
@@ -106,6 +111,10 @@ void Jugador::atacar() {
 
 void Jugador::habilitarMovimiento(bool habilitado) {
     movimientoHabilitado = habilitado;
+}
+
+void Jugador::habilitarSaltoEsquive(bool habilitado) {
+    saltoEsquiveHabilitado = habilitado;
 }
 
 void Jugador::guardarProgreso() {
