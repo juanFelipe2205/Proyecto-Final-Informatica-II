@@ -2,8 +2,8 @@
 #include <QtMath>
 #include <QGraphicsScene>
 
-Enemigo::Enemigo(Jugador *jugador) 
-    : jugador(jugador), velocidad(2) {
+Enemigo::Enemigo(Jugador *jugador, int vida) 
+    : jugador(jugador), velocidad(2), vida(vida) {
     setPixmap(QPixmap(":/images/enemigo.png"));
     timerMovimiento = new QTimer(this);
     connect(timerMovimiento, &QTimer::timeout, this, &Enemigo::mover);
@@ -30,4 +30,16 @@ void Enemigo::mover() {
     }
     
     atacar();
+}
+
+void Enemigo::reducirVida(int cantidad) {
+    vida -= cantidad;
+    if (vida <= 0) {
+        scene()->removeItem(this);
+        delete this;
+    }
+}
+
+int Enemigo::getVida() const {
+    return vida;
 }
