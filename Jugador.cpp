@@ -91,8 +91,24 @@ void Jugador::reducirVida(int cantidad) {
         QFont font("Arial", 48);
         gameOverText->setFont(font);
         gameOverText->setDefaultTextColor(Qt::red);
-        gameOverText->setPos(200, 200); 
+        gameOverText->setPos(200, 200);  
         scene()->addItem(gameOverText);
+        QGraphicsRectItem *reintentarButton = new QGraphicsRectItem(200, 300, 200, 50);
+        QGraphicsTextItem *reintentarText = new QGraphicsTextItem("Reintentar");
+        reintentarText->setPos(250, 310); 
+        scene()->addItem(reintentarButton);
+        scene()->addItem(reintentarText);
+        connect(reintentarButton, &QGraphicsRectItem::mousePressEvent, [=]() {
+            scene()->clear(); 
+        });
+        QGraphicsRectItem *salirButton = new QGraphicsRectItem(200, 360, 200, 50);
+        QGraphicsTextItem *salirText = new QGraphicsTextItem("Salir");
+        salirText->setPos(270, 370);  
+        scene()->addItem(salirButton);
+        scene()->addItem(salirText);
+        connect(salirButton, &QGraphicsRectItem::mousePressEvent, [=]() {
+            qApp->quit();  
+        });
         scene()->removeItem(this);
         delete this;
     }
