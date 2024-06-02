@@ -7,7 +7,7 @@ Nivel1::Nivel1(Jugador *jugador) : Nivel(jugador) {
 }
 
 void Nivel1::cargar() {
-    jugador->setPos(0, 500);  
+    jugador->setPos(0, 500);
 }
 
 void Nivel1::actualizar() {
@@ -25,7 +25,7 @@ void Nivel1::actualizar() {
 
 void Nivel1::generarObstaculo() {
     if (obstaculos.size() < 5) {
-        Obstaculo *obstaculo = new Obstaculo();
+        Obstaculo *obstaculo = new Obstaculo(jugador);
         obstaculo->setPos(800, jugador->y());  
         obstaculos.append(obstaculo);
         jugador->scene()->addItem(obstaculo);
