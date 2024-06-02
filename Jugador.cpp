@@ -1,8 +1,9 @@
 #include "Jugador.h"
+#include <QGraphicsScene>
 
 Jugador::Jugador() 
     : izquierda(false), derecha(false), saltando(false), 
-      velocidadX(0), velocidadY(0), gravedad(0.5) {
+      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10) {
     setPixmap(QPixmap(":/images/jugador.png"));
     timerSalto = new QTimer(this);
     connect(timerSalto, &QTimer::timeout, this, &Jugador::actualizarSalto);
@@ -15,7 +16,7 @@ void Jugador::keyPressEvent(QKeyEvent *event) {
         derecha = true;
     } else if (event->key() == Qt::Key_Space && !saltando) {
         saltando = true;
-        velocidadY = -10;  
+        velocidadY = -10; 
         timerSalto->start(16);
     }
 }
@@ -47,4 +48,16 @@ void Jugador::actualizarSalto() {
             timerSalto->stop();
         }
     }
+}
+
+void Jugador::reducirVida(int cantidad) {
+    vida -= cantidad;
+    if (vida <= 0) {
+        scene()->removeItem(this);
+        delete this;
+    }
+}
+
+int Jugador::getVida() const {
+    return vida;
 }
