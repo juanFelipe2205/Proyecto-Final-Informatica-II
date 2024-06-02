@@ -1,25 +1,24 @@
 #include "Enemigo.h"
+#include <QtMath>
 
-Enemigo::Enemigo() 
-    : amplitud(50), frecuencia(0.05), fase(0) {
+Enemigo::Enemigo(Jugador *jugador) 
+    : jugador(jugador), velocidad(2) {
     setPixmap(QPixmap(":/images/enemigo.png"));
     timerMovimiento = new QTimer(this);
-    connect(timerMovimiento, &QTimer::timeout, this, &Enemigo::actualizarMovimiento);
+    connect(timerMovimiento, &QTimer::timeout, this, &Enemigo::mover);
     timerMovimiento->start(16);
 }
 
 void Enemigo::atacar() {
-    // Por implementar
-}
-
-void Enemigo::actualizarMovimiento() {
-    setPos(x() + amplitud * qSin(fase), y());
-    fase += frecuencia;
-    if (fase >= 2 * M_PI) {
-        fase = 0;
-    }
+    // Implementar lógica de ataque aquí
 }
 
 void Enemigo::mover() {
-    // Por implementar
+    qreal dx = jugador->x() - x();
+    qreal dy = jugador->y() - y();
+    qreal distancia = qSqrt(dx*dx + dy*dy);
+    
+    if (distancia > 0) {
+        setPos(x() + velocidad * (dx / distancia), y() + velocidad * (dy / distancia));
+    }
 }
