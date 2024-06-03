@@ -1,34 +1,33 @@
 #include "Nivel1.h"
+#include "Obstaculo.h"
 
-Nivel1::Nivel1(Jugador *jugador) : Nivel(jugador) {
-    timerGeneracion = new QTimer(this);
-    connect(timerGeneracion, &QTimer::timeout, this, &Nivel1::generarObstaculo);
-    timerGeneracion->start(2000);  
+Nivel1::Nivel1(Jugador *jugador, QObject *parent)
+    : Nivel(jugador, parent) {
 }
 
 void Nivel1::cargar() {
-    jugador->setPos(100, 500); 
-    jugador->habilitarMovimiento(false);  
+    jugador->habilitarMovimiento(false); 
+    crearObstaculos();
 }
 
 void Nivel1::actualizar() {
-    for (Obstaculo *obstaculo : obstaculos) {
-        obstaculo->mover();
-    }
-    jugador->mover();
-    for (int i = 0; i < obstaculos.size(); ++i) {
-        if (obstaculos[i]->x() < -50) {
-            delete obstaculos[i];
-            obstaculos.removeAt(i);
+    for (QGraphicsItem *item : scene->items()) {
+        Obstaculo *obstaculo = dynamic_cast<Obstaculo *>(item);
+        if (obstaculo) {
+            obstaculo->mover();
+            if (jugador->collidesWithItem(obstaculo)) {
+                jugador->reducirVida(1);
+                scene->removeItem(obstaculo);
+                delete obstaculo;
+            }
         }
     }
 }
 
-void Nivel1::generarObstaculo() {
-    if (obstaculos.size() < 5) {
-        Obstaculo *obstaculo = new Obstaculo(jugador);
-        obstaculo->setPos(800, 500);  
-        obstaculos.append(obstaculo);
-        jugador->scene()->addItem(obstaculo);
+void Nivel1::crearObstaculos() {
+    for (int i = 0; i < 5; ++i) {
+        Obstaculo *obstaculo = new Obstaculo();
+        obstaculo->setPos(800 + i * 200, 500);  
+        scene->addItem(obstaculo);
     }
 }
