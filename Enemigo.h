@@ -2,23 +2,17 @@
 #define ENEMIGO_H
 
 #include <QGraphicsPixmapItem>
-#include <QTimer>
-#include "Jugador.h"
+#include <QObject>
 
-class Enemigo : public QGraphicsPixmapItem {
+class Enemigo : public QObject, public QGraphicsPixmapItem {
+    Q_OBJECT
 public:
-    Enemigo(Jugador *jugador, int vida = 2);
-    void atacar();
+    Enemigo(int vida);
     void mover();
     void reducirVida(int cantidad);
     int getVida() const;
-
 private:
-    Jugador *jugador;
-    qreal velocidad;
     int vida;
-    QTimer *timerMovimiento;
 };
 
 #endif 
-
