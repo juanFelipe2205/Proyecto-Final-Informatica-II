@@ -1,16 +1,19 @@
 #include "Jugador.h"
+#include "Nivel.h"
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
+#include <QPushButton>
 #include <QFont>
 #include <QList>
 #include <QtMath>
 #include <QFile>
 #include <QTextStream>
+#include <QApplication>
 
-Jugador::Jugador() 
+Jugador::Jugador()
     : izquierda(false), derecha(false), saltando(false), atacando(false),
       movimientoHabilitado(true), saltoEsquiveHabilitado(false),
-      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10), nivelActual(1) {
+      velocidadX(0), velocidadY(0), gravedad(0.5), vida(10), nivelActual(1), nivel(nullptr) {
     setPixmap(QPixmap(":/images/jugador.png"));
     timerSalto = new QTimer(this);
     connect(timerSalto, &QTimer::timeout, this, &Jugador::actualizarSalto);
@@ -26,7 +29,7 @@ void Jugador::keyPressEvent(QKeyEvent *event) {
             velocidadY = -10;  
             timerSalto->start(16);
             if (saltoEsquiveHabilitado) {
-                timerSaltoEsquive->start(3000);  
+                timerSaltoEsquive->start(3000); 
             }
         }
     } else if (event->key() == Qt::Key_H && !atacando) {
@@ -91,26 +94,22 @@ void Jugador::reducirVida(int cantidad) {
         QFont font("Arial", 48);
         gameOverText->setFont(font);
         gameOverText->setDefaultTextColor(Qt::red);
-        gameOverText->setPos(200, 200);  
+        gameOverText->setPos(200, 150);  
         scene()->addItem(gameOverText);
-        QGraphicsRectItem *reintentarButton = new QGraphicsRectItem(200, 300, 200, 50);
-        QGraphicsTextItem *reintentarText = new QGraphicsTextItem("Reintentar");
-        reintentarText->setPos(250, 310); 
-        scene()->addItem(reintentarButton);
-        scene()->addItem(reintentarText);
-        connect(reintentarButton, &QGraphicsRectItem::mousePressEvent, [=]() {
-            scene()->clear(); 
-        });
-        QGraphicsRectItem *salirButton = new QGraphicsRectItem(200, 360, 200, 50);
-        QGraphicsTextItem *salirText = new QGraphicsTextItem("Salir");
-        salirText->setPos(270, 370);  
-        scene()->addItem(salirButton);
-        scene()->addItem(salirText);
-        connect(salirButton, &QGraphicsRectItem::mousePressEvent, [=]() {
-            qApp->quit();  
-        });
-        scene()->removeItem(this);
-        delete this;
+        QPushButton *reintentarButton = new QPushButton("Reintentar");
+        QPushButton *salirButton = new QPushButton("Salir");
+        reintentarButton->setGeometry(300, 300, 200, 50);
+        salirButton->setGeometry(300, 400, 200, 50);
+
+        scene()->addWidget(reintentarButton);
+        scene()->addWidget(salirButton);
+
+        connect(reintentarButton, &QPushButton::clicked, this, &Jugador::reiniciarNivel);
+        connect(salirButton, &QPushButton::clicked, []() { QApplication::quit(); });
+        movimientoHabilitado = false;
+        if (nivel) {
+            nivel->detener();
+        }
     }
 }
 
@@ -125,7 +124,7 @@ void Jugador::atacar() {
         if (enemigo) {
             qreal dx = enemigo->x() - x();
             qreal dy = enemigo->y() - y();
-            qreal distancia = qSqrt(dx*dx + dy*dy);
+            qreal distancia = qSqrt(dx * dx + dy * dy);
             if (distancia < 40) {  
                 enemigo->reducirVida(1);
             }
@@ -173,3 +172,28 @@ void Jugador::borrarProgreso() {
         file.remove();
     }
 }
+
+void Jugador::reiniciarNivel() {
+    vida = 10;
+    setPos(400, 500);  
+    for (QGraphicsItem *item : scene()->items()) {
+        if (QGraphicsTextItem *textItem = dynamic_cast<QGraphicsTextItem *>(item)) {
+            if (textItem->toPlainText() == "Game Over") {
+                scene()->removeItem(item);
+                delete item;
+            }
+        } else if (QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(item)) {
+            if (QPushButton *button = dynamic_cast<QPushButton *>(widget->widget())) {
+                if (button->text() == "Reintentar" || button->text() == "Salir") {
+                    scene()->removeItem(item);
+                    delete item;
+                }
+            }
+        }
+    }
+    if (nivel) {
+        nivel->inicializar();
+    }
+    movimientoHabilitado = true;
+}
+
