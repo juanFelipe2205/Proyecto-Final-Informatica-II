@@ -2,22 +2,13 @@
 #define OBSTACULO_H
 
 #include <QGraphicsPixmapItem>
-#include <QTimer>
-#include "Jugador.h"
+#include <QObject>
 
-class Obstaculo : public QGraphicsPixmapItem {
+class Obstaculo : public QObject, public QGraphicsPixmapItem {
+    Q_OBJECT
 public:
-    Obstaculo(Jugador *jugador);
+    Obstaculo();
     void mover();
-
-private slots:
-    void actualizarCaida();
-
-private:
-    qreal velocidadY;
-    qreal gravedad;
-    Jugador *jugador;
-    QTimer *timerCaida;
 };
 
 #endif 
