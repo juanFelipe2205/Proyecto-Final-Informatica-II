@@ -2,17 +2,22 @@
 #define NIVEL3_H
 
 #include "Nivel.h"
+#include "Enemigo.h"
+#include <QTimer>
 
 class Nivel3 : public Nivel {
+    Q_OBJECT
 public:
-    Nivel3(Jugador *jugador);
+    explicit NivelTres(Jugador *jugador, QObject *parent = nullptr);
     void cargar() override;
     void actualizar() override;
-
 private:
-    void generarHorda();
-    int contadorHordas;
-    bool jefeFinalGenerado;
+    void crearObstaculos();
+    void crearEnemigos();
+    void crearJefeFinal();
+    QList<Enemigo*> enemigos;
+    Enemigo* jefeFinal;
+    int contadorEnemigos;
 };
 
 #endif 
