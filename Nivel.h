@@ -1,22 +1,21 @@
 #ifndef NIVEL_H
 #define NIVEL_H
 
-#include <QList>
+#include <QObject>
+#include <QGraphicsScene>
 #include "Jugador.h"
-#include "Obstaculo.h"
-#include "Enemigo.h"
 
-class Nivel {
+class Nivel : public QObject {
+    Q_OBJECT
 public:
-    Nivel(Jugador *jugador);
-    virtual ~Nivel() = default;
+    explicit Nivel(Jugador *jugador, QObject *parent = nullptr);
     virtual void cargar() = 0;
     virtual void actualizar() = 0;
-
+    virtual void inicializar();  
+    void detener();  
 protected:
     Jugador *jugador;
-    QList<Obstaculo*> obstaculos;
-    QList<Enemigo*> enemigos;
+    QGraphicsScene *scene;
 };
 
 #endif 
