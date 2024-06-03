@@ -1,43 +1,24 @@
 #include "Enemigo.h"
-#include <QtMath>
-#include <QGraphicsScene>
 
-Enemigo::Enemigo(Jugador *jugador, int vida) 
-    : jugador(jugador), velocidad(2), vida(vida) {
+Enemigo::Enemigo(int vidaInicial)
+    : vida(vidaInicial) {
     setPixmap(QPixmap(":/images/enemigo.png"));
-    timerMovimiento = new QTimer(this);
-    connect(timerMovimiento, &QTimer::timeout, this, &Enemigo::mover);
-    timerMovimiento->start(16);
-}
-
-void Enemigo::atacar() {
-    qreal dx = jugador->x() - x();
-    qreal dy = jugador->y() - y();
-    qreal distancia = qSqrt(dx*dx + dy*dy);
-    
-    if (distancia < 10) {  
-        jugador->reducirVida(1);
-    }
 }
 
 void Enemigo::mover() {
-    qreal dx = jugador->x() - x();
-    qreal dy = jugador->y() - y();
-    qreal distancia = qSqrt(dx*dx + dy*dy);
-    
-    if (distancia > 0) {
-        setPos(x() + velocidad * (dx / distancia), y() + velocidad * (dy / distancia));
+    QGraphicsItem *jugador = scene()->focusItem();
+    if (jugador) {
+        int dx = jugador->x() - x();
+        int dy = jugador->y() - y();
+        if (dx > 0) setPos(x() + 1, y());
+        else if (dx < 0) setPos(x() - 1, y());
+        if (dy > 0) setPos(x(), y() + 1);
+        else if (dy < 0) setPos(x(), y() - 1);
     }
-    
-    atacar();
 }
 
 void Enemigo::reducirVida(int cantidad) {
     vida -= cantidad;
-    if (vida <= 0) {
-        scene()->removeItem(this);
-        delete this;
-    }
 }
 
 int Enemigo::getVida() const {
