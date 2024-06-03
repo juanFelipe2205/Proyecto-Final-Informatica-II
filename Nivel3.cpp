@@ -1,56 +1,77 @@
 #include "Nivel3.h"
+#include "Obstaculo.h"
 
-Nivel3::Nivel3(Jugador *jugador) : Nivel(jugador), contadorHordas(0), jefeFinalGenerado(false) {
-    timerGeneracion = new QTimer(this);
-    connect(timerGeneracion, &QTimer::timeout, this, &Nivel3::generarHorda);
-    timerGeneracion->start(3000);  
+NivelTres::Nivel3(Jugador *jugador, QObject *parent)
+    : Nivel(jugador, parent), jefeFinal(nullptr), contadorEnemigos(0) {
 }
 
 void Nivel3::cargar() {
-    jugador->setPos(400, 500);  
-    jugador->habilitarMovimiento(true); 
-    generarHorda();
+    jugador->habilitarMovimiento(true);  
+    jugador->habilitarSaltoEsquive(true); 
+    crearEnemigos();
+    crearObstaculos();
 }
 
 void Nivel3::actualizar() {
-    for (Enemigo *enemigo : enemigos) {
-        enemigo->mover();
-        enemigo->atacar();
-    }
-    for (Obstaculo *obstaculo : obstaculos) {
-        obstaculo->moverCaidaLibre();
-    }
-    jugador->mover();
-    for (int i = 0; i < enemigos.size(); ++i) {
-        if (enemigos[i]->x() < -50 || enemigos[i]->x() > 850) {
-            delete enemigos[i];
-            enemigos.removeAt(i);
+    for (QGraphicsItem *item : scene->items()) {
+        Obstaculo *obstaculo = dynamic_cast<Obstaculo *>(item);
+        if (obstaculo) {
+            obstaculo->mover();
+            if (jugador->collidesWithItem(obstaculo)) {
+                jugador->reducirVida(1);
+                scene->removeItem(obstaculo);
+                delete obstaculo;
+            }
         }
     }
-    if (enemigos.isEmpty() && !jefeFinalGenerado && contadorHordas >= 5) {
-        Enemigo *jefeFinal = new Enemigo(jugador, 10);  
-        jefeFinal->setPos(400, 400);
-        enemigos.append(jefeFinal);
-        jugador->scene()->addItem(jefeFinal);
-        jefeFinalGenerado = true;
+    for (Enemigo* enemigo : enemigos) {
+        enemigo->mover();
+        if (jugador->collidesWithItem(enemigo)) {
+            jugador->reducirVida(1);
+        }
+        if (enemigo->getVida() <= 0) {
+            scene->removeItem(enemigo);
+            enemigos.removeOne(enemigo);
+            delete enemigo;
+            contadorEnemigos--;
+        }
     }
-
-    if (obstaculos.isEmpty() && contadorHordas < 5) {
-        Obstaculo *obstaculo = new Obstaculo(jugador, false);
-        obstaculo->setPos(qrand() % 800, 0);  
-        obstaculos.append(obstaculo);
-        jugador->scene()->addItem(obstaculo);
+    if (jefeFinal) {
+        jefeFinal->mover();
+        if (jugador->collidesWithItem(jefeFinal)) {
+            jugador->reducirVida(1);
+        }
+        if (jefeFinal->getVida() <= 0) {
+            scene->removeItem(jefeFinal);
+            delete jefeFinal;
+            jefeFinal = nullptr;
+        }
+    }
+    if (contadorEnemigos <= 0 && !jefeFinal) {
+        crearJefeFinal();
     }
 }
 
-void Nivel3::generarHorda() {
-    if (enemigos.size() < 10 && contadorHordas < 5) {
-        for (int i = 0; i < 5; ++i) {
-            Enemigo *enemigo = new Enemigo(jugador);
-            enemigo->setPos(qrand() % 800, 0);  
-            enemigos.append(enemigo);
-            jugador->scene()->addItem(enemigo);
-        }
-        contadorHordas++;
+void Nivel3::crearObstaculos() {
+    for (int i = 0; i < 5; ++i) {
+        Obstaculo *obstaculo = new Obstaculo(Obstaculo::CaidaLibre);
+        obstaculo->setPos(qrand() % 800, 0);  
+        scene->addItem(obstaculo);
     }
+}
+
+void Nivel3::crearEnemigos() {
+    for (int i = 0; i < 10; ++i) {
+        Enemigo *enemigo = new Enemigo(2);
+        enemigo->setPos(qrand() % 800, 500);  
+        enemigos.append(enemigo);
+        scene->addItem(enemigo);
+        contadorEnemigos++;
+    }
+}
+
+void Nivel3::crearJefeFinal() {
+    jefeFinal = new Enemigo(10);  
+    jefeFinal->setPos(400, 500);
+    scene->addItem(jefeFinal);
 }
